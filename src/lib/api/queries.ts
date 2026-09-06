@@ -77,7 +77,7 @@ export function useBeforeAfterImages() {
 export function useWorkInProgressImages() {
   return useQuery({
     queryKey: ["work-in-progress-images"],
-    queryFn: fetchWorkInProgressImages,
-    staleTime: 0,
+    queryFn: ({ signal }) => fetchWorkInProgressImages(signal),
+    staleTime: 2 * 60 * 60_000, // 2 hours
   });
 }

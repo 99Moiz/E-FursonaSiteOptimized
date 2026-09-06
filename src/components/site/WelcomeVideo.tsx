@@ -1,7 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { motion } from "framer-motion";
 import { Play, Pause } from "lucide-react";
-import welcomeVideo from "@/assets/video/welcome.mp4";
 import welcomePoster from "@/assets/video/welcome-poster.png";
 
 
@@ -11,6 +10,21 @@ export function WelcomeVideo() {
   const [playing, setPlaying] = useState(false);
   const [started, setStarted] = useState(false);
   const [isHoverPreviewing, setIsHoverPreviewing] = useState(false);
+  const [videoSrc, setVideoSrc] = useState<string>();
+  const videoSrcRef = useRef<string>();
+  const videoLoadRef = useRef<Promise<string> | null>(null);
+
+  const loadVideo = () => {
+    if (videoSrcRef.current) return Promise.resolve(videoSrcRef.current);
+    if (!videoLoadRef.current) {
+      videoLoadRef.current = import("@/assets/video/welcome.mp4").then(({ default: src }) => {
+        videoSrcRef.current = src;
+        setVideoSrc(src);
+        return src;
+      });
+    }
+    return videoLoadRef.current;
+  };
 
   const isMobileOrTablet = () => window.matchMedia("(max-width: 1024px)").matches;
 
@@ -24,15 +38,16 @@ export function WelcomeVideo() {
     setPlaying(false);
   };
 
-  const startMutedAutoplay = () => {
+  const startMutedAutoplay = async () => {
     const video = videoRef.current;
     if (!video || started || !isMobileOrTablet()) return;
 
+    const src = await loadVideo();
+    if (!videoRef.current) return;
+    video.src = src;
     video.muted = true;
     video.loop = true;
-    if (video.readyState <= 1) {
-      video.load();
-    }
+    video.load();
     video.currentTime = 0;
 
     const tryPlay = () => {
@@ -100,19 +115,39 @@ export function WelcomeVideo() {
     };
   }, [started]);
 
-  const toggleSound = () => {
+  const toggleSound = async (event?: React.MouseEvent<HTMLElement | HTMLButtonElement> | React.PointerEvent<HTMLElement | HTMLButtonElement>) => {
     const v = videoRef.current;
     if (!v) return;
+
+    event?.preventDefault();
+    event?.stopPropagation();
+
     setIsHoverPreviewing(false);
-    v.loop = false;
-    if (v.paused) {
+
+    if (v.muted || !started) {
+      const src = await loadVideo();
+      if (!videoRef.current) return;
+      v.src = src;
+      if (v.readyState <= 1) v.load();
+      v.loop = false;
       v.muted = false;
+      v.defaultMuted = false;
+      v.volume = 1;
       v.currentTime = started ? v.currentTime : 0;
-      v.play().catch(() => {});
+      v.removeAttribute("muted");
+
+      if (v.paused) {
+        void v.play().catch(() => {});
+      }
+
       setStarted(true);
-    } else {
-      v.pause();
+      setPlaying(true);
+      return;
     }
+
+    v.pause();
+    setStarted(false);
+    setPlaying(false);
   };
 
   const onEnded = () => {
@@ -125,9 +160,12 @@ export function WelcomeVideo() {
     setStarted(false);
   };
 
-  const onMouseEnter = () => {
+  const onMouseEnter = async () => {
     const v = videoRef.current;
     if (!v || started) return; // once the user has clicked, hover no longer drives playback
+    const src = await loadVideo();
+    if (!videoRef.current) return;
+    v.src = src;
     v.muted = true; // must stay muted — see note above
     v.loop = true;
     v.currentTime = 0;
@@ -172,15 +210,16 @@ export function WelcomeVideo() {
         >
           <video
             ref={videoRef}
-            src={welcomeVideo}
+            src={videoSrc}
             poster={welcomePoster}
             playsInline
             autoPlay={false}
             muted
-            preload="auto"
+            preload="none"
             onPlay={() => setPlaying(true)}
             onPause={() => setPlaying(false)}
             onEnded={onEnded}
+            onPointerDown={toggleSound}
             onClick={toggleSound}
             className="h-full w-full cursor-pointer object-cover"
           />
@@ -189,6 +228,7 @@ export function WelcomeVideo() {
               hover preview) is actually running */}
           <button
             type="button"
+            onPointerDown={toggleSound}
             onClick={toggleSound}
             aria-label={playing && started ? "Pause welcome video" : "Play welcome video with sound"}
             className={`absolute inset-0 flex items-center justify-center bg-black/25 transition-opacity duration-500 ${
