@@ -1,8 +1,8 @@
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { motion } from "framer-motion";
 import { Play, Pause } from "lucide-react";
 import welcomeVideo from "@/assets/video/welcome.mp4";
-import welcomePoster from "@/assets/video/welcome-poster.jpg";
+import welcomePoster from "@/assets/video/welcome-poster.png";
 
 /**
  * Short narrated intro from the artist.
@@ -17,9 +17,66 @@ import welcomePoster from "@/assets/video/welcome-poster.jpg";
  */
 export function WelcomeVideo() {
   const videoRef = useRef<HTMLVideoElement>(null);
+  const sectionRef = useRef<HTMLElement | null>(null);
   const [playing, setPlaying] = useState(false);
   const [started, setStarted] = useState(false);
   const [isHoverPreviewing, setIsHoverPreviewing] = useState(false);
+
+  useEffect(() => {
+    const video = videoRef.current;
+    const section = sectionRef.current;
+    if (!video || !section) return;
+
+    const isMobileOrTablet = () => window.matchMedia("(max-width: 1024px)").matches;
+
+    const tryAutoplayInView = () => {
+      if (started || !isMobileOrTablet()) return;
+
+      const rect = section.getBoundingClientRect();
+      const isInView = rect.top < window.innerHeight * 0.9 && rect.bottom > 0;
+
+      if (isInView) {
+        video.muted = true;
+        video.loop = true;
+        video.currentTime = 0;
+        video.play().then(() => {
+          setIsHoverPreviewing(true);
+          setPlaying(true);
+        }).catch(() => {
+          setIsHoverPreviewing(false);
+          setPlaying(false);
+        });
+        return;
+      }
+
+      setIsHoverPreviewing(false);
+      video.pause();
+      video.currentTime = 0;
+      setPlaying(false);
+    };
+
+    tryAutoplayInView();
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        const entry = entries[0];
+        if (!entry) return;
+
+        if (entry.isIntersecting) {
+          tryAutoplayInView();
+        } else if (!started && isMobileOrTablet()) {
+          setIsHoverPreviewing(false);
+          video.pause();
+          video.currentTime = 0;
+          setPlaying(false);
+        }
+      },
+      { threshold: 0.35 },
+    );
+
+    observer.observe(section);
+    return () => observer.disconnect();
+  }, [started]);
 
   const toggleSound = () => {
     const v = videoRef.current;
@@ -81,7 +138,8 @@ export function WelcomeVideo() {
           </h2>
         </motion.div>
 
-        <motion.div
+        <motion.section
+          ref={sectionRef}
           initial={{ opacity: 0, y: 30, scale: 0.98 }}
           whileInView={{ opacity: 1, y: 0, scale: 1 }}
           viewport={{ once: true, margin: "-60px" }}
@@ -124,7 +182,7 @@ export function WelcomeVideo() {
               )}
             </span>
           </button>
-        </motion.div>
+        </motion.section>
       </div>
     </section>
   );
