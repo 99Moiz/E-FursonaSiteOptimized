@@ -4,17 +4,7 @@ import { Play, Pause } from "lucide-react";
 import welcomeVideo from "@/assets/video/welcome.mp4";
 import welcomePoster from "@/assets/video/welcome-poster.png";
 
-/**
- * Short narrated intro from the artist.
- * - Hovering (desktop) plays a MUTED preview loop. It has to stay muted:
- *   browsers silently reject `play()` for unmuted video unless it's fired
- *   from a real click, so an unmuted attempt on mouseenter always failed —
- *   that was the "hover doesn't play" bug.
- * - Clicking toggles real playback WITH sound; once that's happened, hover
- *   no longer takes over — the click state is in full control.
- * - When the video finishes, it resets back to frame 0 and shows the play
- *   button again, so clicking always restarts from the beginning.
- */
+
 export function WelcomeVideo() {
   const videoRef = useRef<HTMLVideoElement>(null);
   const sectionRef = useRef<HTMLElement | null>(null);
@@ -22,12 +12,48 @@ export function WelcomeVideo() {
   const [started, setStarted] = useState(false);
   const [isHoverPreviewing, setIsHoverPreviewing] = useState(false);
 
-  useEffect(() => {
-    const video = videoRef.current;
-    const section = sectionRef.current;
-    if (!video || !section) return;
+  const isMobileOrTablet = () => window.matchMedia("(max-width: 1024px)").matches;
 
-    const isMobileOrTablet = () => window.matchMedia("(max-width: 1024px)").matches;
+  const stopAutoplay = () => {
+    const video = videoRef.current;
+    if (!video) return;
+
+    setIsHoverPreviewing(false);
+    video.pause();
+    video.currentTime = 0;
+    setPlaying(false);
+  };
+
+  const startMutedAutoplay = () => {
+    const video = videoRef.current;
+    if (!video || started || !isMobileOrTablet()) return;
+
+    video.muted = true;
+    video.loop = true;
+    if (video.readyState <= 1) {
+      video.load();
+    }
+    video.currentTime = 0;
+
+    const tryPlay = () => {
+      void video.play()
+        .then(() => {
+          setIsHoverPreviewing(true);
+          setPlaying(true);
+        })
+        .catch(() => {
+          setIsHoverPreviewing(false);
+          setPlaying(false);
+        });
+    };
+
+    tryPlay();
+    requestAnimationFrame(tryPlay);
+  };
+
+  useEffect(() => {
+    const section = sectionRef.current;
+    if (!section) return;
 
     const tryAutoplayInView = () => {
       if (started || !isMobileOrTablet()) return;
@@ -36,23 +62,10 @@ export function WelcomeVideo() {
       const isInView = rect.top < window.innerHeight * 0.9 && rect.bottom > 0;
 
       if (isInView) {
-        video.muted = true;
-        video.loop = true;
-        video.currentTime = 0;
-        video.play().then(() => {
-          setIsHoverPreviewing(true);
-          setPlaying(true);
-        }).catch(() => {
-          setIsHoverPreviewing(false);
-          setPlaying(false);
-        });
-        return;
+        startMutedAutoplay();
+      } else {
+        stopAutoplay();
       }
-
-      setIsHoverPreviewing(false);
-      video.pause();
-      video.currentTime = 0;
-      setPlaying(false);
     };
 
     tryAutoplayInView();
@@ -63,19 +76,28 @@ export function WelcomeVideo() {
         if (!entry) return;
 
         if (entry.isIntersecting) {
-          tryAutoplayInView();
+          startMutedAutoplay();
         } else if (!started && isMobileOrTablet()) {
-          setIsHoverPreviewing(false);
-          video.pause();
-          video.currentTime = 0;
-          setPlaying(false);
+          stopAutoplay();
         }
       },
-      { threshold: 0.35 },
+      { threshold: 0.25, rootMargin: "0px 0px -10% 0px" },
     );
 
     observer.observe(section);
-    return () => observer.disconnect();
+
+    const handleResize = () => {
+      if (!started && isMobileOrTablet()) {
+        tryAutoplayInView();
+      }
+    };
+
+    window.addEventListener("resize", handleResize);
+
+    return () => {
+      observer.disconnect();
+      window.removeEventListener("resize", handleResize);
+    };
   }, [started]);
 
   const toggleSound = () => {
@@ -153,8 +175,9 @@ export function WelcomeVideo() {
             src={welcomeVideo}
             poster={welcomePoster}
             playsInline
+            autoPlay={false}
             muted
-            preload="metadata"
+            preload="auto"
             onPlay={() => setPlaying(true)}
             onPause={() => setPlaying(false)}
             onEnded={onEnded}
