@@ -1,0 +1,8 @@
+User-agent: *
+Allow: /
+
+# Nothing on this SPA is behind a private/admin route, so there's nothing
+# to disallow — a bare Allow: / plus the sitemap pointer is the correct,
+# optimal robots.txt for a fully public single-page marketing site.
+
+Sitemap: https://fursonadesigns.com/sitemap.xml

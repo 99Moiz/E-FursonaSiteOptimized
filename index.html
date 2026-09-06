@@ -1,0 +1,100 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <!-- Favicon -->
+    <link rel="icon" type="image/png" href="/logo.jpg" />
+    <link rel="apple-touch-icon" href="/logo.jpg" />
+
+    <title>Fursona Designs Hub | Custom Fursona Art & Fursuit Commissions</title>
+
+    <meta
+      name="description"
+      content="Commission custom fursona art, fursuits, reference sheets, and furry character designs from Fursona Designs Hub. Professional furry commission artists — headshots to full fursuit builds, worldwide shipping."
+    />
+    <meta
+      name="keywords"
+      content="fursona art, fursona commission, custom fursona design, fursuit maker, custom fursuit commission, furry commission artist, fursona reference sheet, anthro art commission, furry character design, fursuit commissions, partial fursuit, full fursuit commission"
+    />
+    <meta name="author" content="Fursona Designs Hub" />
+    <meta name="robots" content="index, follow, max-image-preview:large" />
+    <link rel="canonical" href="https://fursonadesigns.com/" />
+    <meta name="theme-color" content="#9AE600" />
+
+    <!-- Open Graph / social sharing -->
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="Fursona Designs Hub" />
+    <meta property="og:title" content="Fursona Designs Hub | Custom Fursona Art & Fursuit Commissions" />
+    <meta
+      property="og:description"
+      content="Commission custom fursona art, fursuits, reference sheets, and furry character designs. Headshots to full fursuit builds, worldwide shipping."
+    />
+    <meta property="og:url" content="https://fursonadesigns.com/" />
+    <meta property="og:image" content="https://fursonadesigns.com/logo.jpg" />
+    <meta property="og:locale" content="en_US" />
+
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="Fursona Designs Hub | Custom Fursona Art & Fursuit Commissions" />
+    <meta
+      name="twitter:description"
+      content="Commission custom fursona art, fursuits, reference sheets, and furry character designs. Headshots to full fursuit builds, worldwide shipping."
+    />
+    <meta name="twitter:image" content="https://fursonadesigns.com/logo.jpg" />
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <!-- Hero image is the Largest Contentful Paint element on first load —
+         preloading it lets the browser fetch it in parallel with the JS
+         bundle instead of waiting to discover it after React mounts. -->
+    <link rel="preload" as="image" href="/src/assets/newheroimage.jpeg" fetchpriority="high" />
+
+    <!-- Organization + WebSite structured data — static and safe to hardcode
+         since it describes the business itself, not page content that
+         changes per API response. FAQPage schema is injected dynamically
+         from the live FAQ data instead (see FAQ.tsx), so it always matches
+         what's actually rendered on the page. -->
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@graph": [
+          {
+            "@type": "Organization",
+            "@id": "https://fursonadesigns.com/#organization",
+            "name": "Fursona Designs Hub",
+            "url": "https://fursonadesigns.com/",
+            "logo": "https://fursonadesigns.com/logo.jpg",
+            "description": "Professional fursona art and custom fursuit design studio — commissions for headshots, full renders, reference sheets, and full fursuit builds.",
+            "sameAs": []
+          },
+          {
+            "@type": "WebSite",
+            "@id": "https://fursonadesigns.com/#website",
+            "url": "https://fursonadesigns.com/",
+            "name": "Fursona Designs Hub",
+            "publisher": { "@id": "https://fursonadesigns.com/#organization" },
+            "inLanguage": "en-US"
+          },
+          {
+            "@type": "Service",
+            "serviceType": "Furry Character & Fursuit Commission",
+            "provider": { "@id": "https://fursonadesigns.com/#organization" },
+            "areaServed": "Worldwide",
+            "description": "Custom fursona art, reference sheets, and fursuit commissions — from digital headshots to full handcrafted fursuit builds."
+          }
+        ]
+      }
+    </script>
+  </head>
+
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>
