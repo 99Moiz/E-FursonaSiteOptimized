@@ -2,13 +2,12 @@ import { Suspense, lazy, useEffect } from "react";
 import { BrowserRouter, Routes, Route, useLocation } from "react-router-dom";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { Toaster } from "sonner";
-import { Aurora } from "@/components/site/Aurora";
-import { CursorGlow } from "@/components/site/CursorGlow";
 import Header from "@/components/Header";
 const Footer = lazy(() => import("@/components/Footer"));
 const WhatsAppFab = lazy(() => import("@/components/site/WhatsAppFab").then((mod) => ({ default: mod.WhatsAppFab })));
 import Home from "@/pages/Home";
 import NotFound from "@/pages/NotFound";
+const ProductDetail = lazy(() => import("@/pages/ProductDetail"));
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -18,7 +17,7 @@ const queryClient = new QueryClient({
       refetchOnReconnect: false,
       refetchOnMount: false,
       staleTime: 300_000,
-      gcTime: 1_800_000,
+      cacheTime: 1_800_000,
     },
   },
 });
@@ -42,18 +41,24 @@ const App = () => (
   <QueryClientProvider client={queryClient}>
     <BrowserRouter>
       <ScrollToTop />
-      <Aurora />
-      <CursorGlow />
       <Header />
       <Routes>
         <Route path="/" element={<Home />} />
+        <Route
+          path="/product/:slug"
+          element={
+            <Suspense fallback={null}>
+              <ProductDetail />
+            </Suspense>
+          }
+        />
         <Route path="*" element={<NotFound />} />
       </Routes>
       <Suspense fallback={null}>
         <Footer />
         <WhatsAppFab />
       </Suspense>
-      <Toaster theme="dark" position="bottom-right" />
+      <Toaster theme="light" position="bottom-right" />
     </BrowserRouter>
   </QueryClientProvider>
 );

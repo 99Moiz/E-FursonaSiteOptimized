@@ -1,4 +1,4 @@
-import { Suspense, lazy, useEffect, useRef, useState, type ReactNode } from "react";
+import { Suspense, lazy } from "react";
 import { Hero } from "@/components/site/Hero";
 const WelcomeVideo = lazy(() => import("@/components/site/WelcomeVideo").then((mod) => ({ default: mod.WelcomeVideo })));
 const CrossCarousel = lazy(() => import("@/components/site/CrossCarousel").then((mod) => ({ default: mod.CrossCarousel })));
@@ -15,84 +15,46 @@ const FAQ = lazy(() => import("@/components/site/FAQ").then((mod) => ({ default:
 const CTA = lazy(() => import("@/components/site/CTA").then((mod) => ({ default: mod.CTA })));
 const Contact = lazy(() => import("@/components/site/Contact").then((mod) => ({ default: mod.Contact })));
 
-function DeferredSection({ children, minHeight }: { children: ReactNode; minHeight: string }) {
-  const sectionRef = useRef<HTMLDivElement>(null);
-  const [shouldRender, setShouldRender] = useState(false);
-
-  useEffect(() => {
-    const section = sectionRef.current;
-    if (!section || shouldRender) return;
-
-    if (!("IntersectionObserver" in window)) {
-      setShouldRender(true);
-      return;
-    }
-
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        if (entry?.isIntersecting) {
-          setShouldRender(true);
-          observer.disconnect();
-        }
-      },
-      { rootMargin: "600px 0px" },
-    );
-    observer.observe(section);
-    return () => observer.disconnect();
-  }, [shouldRender]);
-
-  return <div ref={sectionRef} style={shouldRender ? undefined : { minHeight }}>{shouldRender ? children : null}</div>;
-}
-
 const Home = () => (
   <>
     <Hero />
-    <DeferredSection minHeight="38rem">
-      <Suspense fallback={null}>
-        <WelcomeVideo />
-        <CrossCarousel />
-      </Suspense>
-    </DeferredSection>
-    <DeferredSection minHeight="52rem">
-      <Suspense fallback={null}>
-        <FeaturedBuilds />
-        <Portfolio />
-      </Suspense>
-    </DeferredSection>
-    <DeferredSection minHeight="40rem">
-      <Suspense fallback={null}>
-        <Features />
-        <Process />
-      </Suspense>
-    </DeferredSection>
-    <DeferredSection minHeight="64rem">
-      <Suspense fallback={null}>
-        <Trust />
-        <TimelapseVideos />
-        <Stats />
-      </Suspense>
-    </DeferredSection>
-    <DeferredSection minHeight="42rem">
-      <Suspense fallback={null}>
-        <Pricing />
-      </Suspense>
-    </DeferredSection>
-    <DeferredSection minHeight="40rem">
-      <Suspense fallback={null}>
-        <Testimonials />
-        <FAQ />
-      </Suspense>
-    </DeferredSection>
-    <DeferredSection minHeight="28rem">
-      <Suspense fallback={null}>
-        <CTA />
-      </Suspense>
-    </DeferredSection>
-    <DeferredSection minHeight="44rem">
-      <Suspense fallback={null}>
-        <Contact />
-      </Suspense>
-    </DeferredSection>
+    {/* Split into sensible loading groups instead of one shared Suspense
+        boundary. Previously ALL 14 below-hero sections waited for the
+        SLOWEST chunk among them before any of them could render — a fast
+        3KB chunk was gated behind a slow one purely because they shared a
+        boundary. Grouping by page position (and giving Pricing/Contact
+        their own boundaries, since they're the two highest-intent sections)
+        lets each group paint as soon as its own chunks + data are ready. */}
+    <Suspense fallback={null}>
+      <WelcomeVideo />
+      <CrossCarousel />
+    </Suspense>
+    <Suspense fallback={null}>
+      <FeaturedBuilds />
+      <Portfolio />
+    </Suspense>
+    <Suspense fallback={null}>
+      <Features />
+      <Process />
+    </Suspense>
+    <Suspense fallback={null}>
+      <Trust />
+      <TimelapseVideos />
+      <Stats />
+    </Suspense>
+    <Suspense fallback={null}>
+      <Pricing />
+    </Suspense>
+    <Suspense fallback={null}>
+      <Testimonials />
+      <FAQ />
+    </Suspense>
+    <Suspense fallback={null}>
+      <CTA />
+    </Suspense>
+    <Suspense fallback={null}>
+      <Contact />
+    </Suspense>
   </>
 );
 

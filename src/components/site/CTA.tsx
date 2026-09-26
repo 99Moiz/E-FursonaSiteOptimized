@@ -1,7 +1,6 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
 import { ArrowRight, MessageCircle, Loader2 } from "lucide-react";
-import { Particles } from "./Aurora";
 import { sendWhatsAppInquiry } from "@/lib/api/whatsapp";
 
 export function CTA() {
@@ -20,38 +19,28 @@ export function CTA() {
   };
 
   return (
-    <section id="cta" className="relative py-24 md:py-32 px-4 sm:px-6">
+    <section id="cta" className="relative py-14 px-4 sm:py-20 sm:px-6">
       <div className="container mx-auto">
-        <div className="relative rounded-[2.5rem] glass-strong p-8 sm:p-12 md:p-20 text-center overflow-hidden glow-ring">
-          <div className="pointer-events-none absolute inset-0 overflow-hidden">
-            <Particles count={26} />
-          </div>
+        <div className="section-dark bg-texture-grid bg-glow-lime relative overflow-hidden rounded-2xl border border-white/10 p-8 shadow-premium-lg text-center sm:p-12 md:p-16">
           <motion.h2
-            initial={{ opacity: 0, y: 30 }}
+            initial={{ opacity: 0, y: 16 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-            className="relative font-display text-[clamp(2rem,6vw,4.5rem)] font-bold leading-[1.02] max-w-3xl mx-auto"
+            className="mx-auto max-w-2xl font-display font-bold text-foreground"
           >
-            Your Character <br />
-            <span className="text-gradient">Deserves Reality.</span>
+            Your character deserves reality.
           </motion.h2>
-          {/* <p className="relative mt-6 text-white/70 max-w-xl mx-auto">
-            Only 12 commission slots open for Q1 2026. Lock yours before the next con season.
-          </p> */}
-          <div className="relative mt-10 flex w-full flex-col sm:flex-row sm:flex-wrap items-center justify-center gap-3.5">
-            <a
-              href="#contact"
-              className="btn-pill !text-base w-full sm:w-auto justify-center !min-h-[3.25rem] sm:!min-h-[3rem]"
-            >
-               Commission Now
+          <div className="mt-8 flex w-full flex-col items-center justify-center gap-3 sm:w-auto sm:flex-row">
+            <a href="#contact" className="btn-pill w-full sm:w-auto">
+              Commission Now
               <span className="btn-pill-arrow">
-                <ArrowRight className="h-4 w-4" />
+                <ArrowRight className="h-3.5 w-3.5" />
               </span>
             </a>
             <button
               onClick={handleWhatsApp}
               disabled={loading}
-              className="inline-flex w-full sm:w-auto min-h-[3.25rem] sm:min-h-[3rem] items-center justify-center gap-2 rounded-full bg-[#25D366] text-black px-8 py-4 font-semibold shadow-premium hover:shadow-[0_0_30px_-8px_#25D366] hover:-translate-y-0.5 active:scale-[0.97] transition-all duration-300 ease-premium disabled:opacity-70"
+              className="inline-flex w-full min-h-[2.625rem] items-center justify-center gap-2 rounded-lg bg-[#25D366] px-6 font-semibold text-white transition-opacity hover:opacity-90 active:scale-[0.98] disabled:opacity-60 sm:w-auto"
             >
               {loading ? <Loader2 className="h-4 w-4 animate-spin" /> : <MessageCircle className="h-4 w-4" />}
               Chat on WhatsApp

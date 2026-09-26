@@ -38,7 +38,7 @@ const fallbackFaqs = [
 ];
 
 export function FAQ() {
-  const { data: faqItems = [] } = useFaqs();
+  const { data: faqItems = [], isLoading } = useFaqs();
   const [open, setOpen] = useState<number | null>(0);
 
   const faqs = useMemo(() => {
@@ -71,28 +71,50 @@ export function FAQ() {
   );
 
   return (
-    <section id="faq" className="relative py-24 md:py-32 px-4 sm:px-6">
+    <section id="faq" className="relative border-y border-border bg-background-alt py-14 sm:py-20 px-4 sm:px-6">
       <JsonLd id="faq-schema" data={faqSchema} />
       <div className="container mx-auto max-w-3xl">
-        <div className="text-center mb-10">
+        <motion.div
+          initial={{ opacity: 0, y: 16 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, margin: "-60px" }}
+          transition={{ duration: 0.4 }}
+          className="text-center mb-10"
+        >
           <p className="kicker">Frequently Asked</p>
-          <h2 className="mt-3 font-display text-3xl sm:text-4xl md:text-5xl font-bold">Answers, before you ask.</h2>
-        </div>
+          <h2 className="mt-3 font-display font-bold text-foreground">Answers, before you ask.</h2>
+        </motion.div>
 
-        <div className="mb-6 flex items-start gap-3 rounded-2xl glass-strong p-4 sm:p-5 shadow-xs">
-          <Truck className="h-5 w-5 text-neon shrink-0 mt-0.5" />
-          <p className="text-sm text-white/80">
-            <span className="font-semibold text-white">Shipping note:</span> Customers are responsible for
+        <motion.div
+          initial={{ opacity: 0, y: 12 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.4, delay: 0.05 }}
+          className="mb-6 flex items-start gap-3 rounded-lg border border-border bg-white p-4 sm:p-5"
+        >
+          <Truck className="h-5 w-5 text-primary-strong shrink-0 mt-0.5" />
+          <p className="text-sm text-foreground">
+            <span className="font-semibold text-foreground">Shipping note:</span> Customers are responsible for
             paying shipping costs unless otherwise agreed during the commission process.
           </p>
-        </div>
+        </motion.div>
 
         <div className="space-y-3">
-          {faqs.map((f, i) => (
-            <div
+          {isLoading
+            ? Array.from({ length: 4 }).map((_, i) => (
+                <div key={i} className="rounded-lg border border-border bg-white p-5">
+                  <div className="skeleton h-4 w-2/3 rounded" />
+                </div>
+              ))
+            : faqs.map((f, i) => (
+            <motion.div
               key={f.q}
-              className={`rounded-2xl glass overflow-hidden border transition-colors duration-300 ${
-                open === i ? "border-neon/30 shadow-[0_0_0_1px_rgba(154,230,0,0.12),0_20px_40px_-24px_rgba(0,0,0,0.7)]" : "border-white/[0.07] hover:border-white/[0.14]"
+              initial={{ opacity: 0, y: 12 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, margin: "-30px" }}
+              transition={{ duration: 0.35, delay: (i % 8) * 0.04 }}
+              className={`rounded-lg bg-white overflow-hidden border transition-colors duration-200 ${
+                open === i ? "border-primary/40" : "border-border hover:border-border-strong"
               }`}
             >
               <button
@@ -101,11 +123,11 @@ export function FAQ() {
                 className="w-full flex items-center justify-between gap-4 p-5 text-left"
               >
                 <span className="font-display font-semibold text-base sm:text-lg flex items-center gap-2">
-                  {f.shipping && <Truck className="h-4 w-4 text-neon shrink-0" />}
+                  {f.shipping && <Truck className="h-4 w-4 text-primary-strong shrink-0" />}
                   {f.q}
                 </span>
-                <span className={`grid h-8 w-8 shrink-0 place-items-center rounded-full transition-all duration-300 ease-premium ${open === i ? "bg-neon/15 rotate-45" : "bg-white/5"}`}>
-                  <Plus className="h-4 w-4 text-neon" />
+                <span className={`grid h-8 w-8 shrink-0 place-items-center rounded-full transition-all duration-300 ease-premium ${open === i ? "bg-primary/15 rotate-45" : "bg-background-alt"}`}>
+                  <Plus className="h-4 w-4 text-primary-strong" />
                 </span>
               </button>
               <AnimatePresence>
@@ -117,12 +139,12 @@ export function FAQ() {
                     transition={{ duration: 0.35, ease: [0.16, 1, 0.3, 1] }}
                     className="overflow-hidden"
                   >
-                    <div className="px-5 pb-5 text-white/65 leading-relaxed">{f.a}</div>
+                    <div className="px-5 pb-5 text-muted-foreground leading-relaxed">{f.a}</div>
                   </motion.div>
                 )}
               </AnimatePresence>
-            </div>
-          ))}
+            </motion.div>
+              ))}
         </div>
       </div>
     </section>

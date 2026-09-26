@@ -110,64 +110,58 @@ export function Pricing() {
   };
 
   return (
-    <section id="pricing" className="relative py-24 md:py-32 px-4 sm:px-6">
+    <section id="pricing" className="bg-texture-grid relative py-14 px-4 sm:py-20 sm:px-6">
       <JsonLd id="pricing-schema" data={offersSchema} />
       <div className="container mx-auto max-w-7xl">
-        <div className="text-center mb-14">
-          <p className="kicker">
-            Commission Pricing
-          </p>
+        <div className="mb-10 text-center sm:mb-14">
+          <p className="kicker">Commission Pricing</p>
 
-          <h2 className="mt-3 font-display text-3xl sm:text-4xl md:text-5xl font-bold max-w-2xl mx-auto">
+          <h2 className="mx-auto mt-3 max-w-2xl font-display font-bold text-foreground">
             Transparent pricing for every commission.
           </h2>
 
-          <p className="mt-4 text-white/60 max-w-2xl mx-auto">
+          <p className="mx-auto mt-3 max-w-2xl text-muted-foreground">
             Starting prices only. Final quotes depend on character complexity,
             accessories, background, and additional requests.
           </p>
         </div>
 
-        <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+        <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
           {plans.map((p, i) => (
             <motion.div
               key={p.name}
-              initial={{ opacity: 0, y: 30 }}
+              initial={{ opacity: 0, y: 16 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
-              transition={{ delay: i * 0.08 }}
-              className={`card-premium group relative flex flex-col p-6 sm:p-7 ${
-                p.featured ? "lg:scale-[1.04] ring-1 ring-neon/30 shadow-glow" : ""
+              transition={{ delay: i * 0.05 }}
+              className={`card-premium group relative flex flex-col p-5 sm:p-6 ${
+                p.featured ? "border-primary/40 shadow-md" : ""
               }`}
             >
               {(p.featured || p.badge) && (
-                <div className="absolute -top-3 left-1/2 -translate-x-1/2 rounded-full bg-gradient-to-r from-primary to-[#7fc700] px-3.5 py-1.5 text-[10px] uppercase tracking-widest text-black font-bold whitespace-nowrap shadow-premium">
+                <div className="absolute -top-3 left-1/2 -translate-x-1/2 whitespace-nowrap rounded-full bg-primary px-3 py-1 text-[10px] font-bold uppercase tracking-wide text-primary-foreground shadow-xs">
                   {p.badge || "Most Popular"}
                 </div>
               )}
 
-              <h3 className="font-display text-xl font-bold tracking-tight">{p.name}</h3>
+              <h3 className="font-display text-lg font-bold text-foreground">{p.name}</h3>
 
-              <p className="mt-2 text-sm leading-relaxed text-white/60 min-h-[60px]">
+              <p className="mt-2 min-h-[48px] text-sm leading-relaxed text-muted-foreground">
                 {p.blurb}
               </p>
 
-              <div className="mt-5 flex items-baseline gap-2 pb-5 border-b border-white/[0.07]">
-                <span className="text-xs uppercase tracking-wide text-white/45">Starting from</span>
-
-                <span className="font-display text-3xl font-bold text-gradient">
+              <div className="mt-4 flex items-baseline gap-2 border-b border-border pb-4">
+                <span className="text-xs uppercase tracking-wide text-muted-foreground">Starting from</span>
+                <span className="font-display text-2xl font-bold text-foreground">
                   ${p.from.toLocaleString()}
                 </span>
               </div>
 
-              <ul className="mt-5 space-y-3 flex-1">
+              <ul className="mt-4 flex-1 space-y-2.5">
                 {p.features.map((feature) => (
-                  <li
-                    key={feature}
-                    className="flex items-start gap-3 text-sm text-white/80"
-                  >
-                    <span className="mt-0.5 grid h-4 w-4 shrink-0 place-items-center rounded-full bg-neon/15">
-                      <Check className="h-2.5 w-2.5 text-neon" />
+                  <li key={feature} className="flex items-start gap-2.5 text-sm text-foreground">
+                    <span className="mt-0.5 grid h-4 w-4 shrink-0 place-items-center rounded-full bg-primary-tint">
+                      <Check className="h-2.5 w-2.5 text-primary-strong" />
                     </span>
                     <span>{feature}</span>
                   </li>
@@ -176,11 +170,7 @@ export function Pricing() {
 
               <a
                 href="#contact"
-                className={
-                  p.featured
-                    ? "mt-8 flex w-full items-center justify-center rounded-full bg-gradient-to-br from-primary via-primary to-[#7fc700] py-3.5 text-sm font-semibold text-black shadow-premium transition-all duration-300 ease-premium hover:shadow-glow hover:-translate-y-0.5 active:scale-[0.98]"
-                    : "mt-8 flex w-full items-center justify-center rounded-full border border-white/12 bg-white/[0.03] backdrop-blur-sm py-3.5 text-sm font-semibold text-white/90 transition-all duration-300 ease-premium hover:border-neon/40 hover:bg-white/[0.06] hover:-translate-y-0.5 active:scale-[0.98]"
-                }
+                className={p.featured ? "btn-pill mt-6 w-full" : "btn-pill-outline mt-6 w-full"}
               >
                 Request a Quote
               </a>
@@ -188,14 +178,11 @@ export function Pricing() {
           ))}
         </div>
 
-        <p className="mt-10 text-center text-sm text-white/50">
+        <p className="mt-8 text-center text-sm text-muted-foreground sm:mt-10">
           Need something different? We also offer completely custom commission
           packages tailored to your project.
           <br />
-          <a
-            href="#contact"
-            className="mt-2 inline-block text-neon hover:underline"
-          >
+          <a href="#contact" className="mt-1 inline-block py-2 font-medium text-primary-strong hover:underline">
             Request a custom quote →
           </a>
         </p>

@@ -36,6 +36,17 @@ export interface ProductListItem {
   sortOrder: number;
 }
 
+export interface ProductVideoItem {
+  id: number;
+  title: string | null;
+  videoUrl: string | null;
+  externalUrl: string | null;
+  thumbnailUrl: string | null;
+  playbackUrl: string | null;
+  isExternal: boolean;
+  sortOrder: number;
+}
+
 export interface ProductDetail {
   id: number;
   slug: string;
@@ -51,6 +62,7 @@ export interface ProductDetail {
   coverImage: string;
   videoUrl?: string | null;
   gallery: GalleryImage[];
+  videos?: ProductVideoItem[];
   features: string[];
   specs: Spec[];
   createdAt: string;

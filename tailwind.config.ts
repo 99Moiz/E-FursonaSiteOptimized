@@ -19,15 +19,20 @@ export default {
         display: ["Space Grotesk", "system-ui", "sans-serif"],
         sans: ["Inter", "system-ui", "sans-serif"],
       },
+      // color-mix + <alpha-value> lets opacity modifiers (bg-primary/20 etc.)
+      // work on these CSS-variable colours; without it Tailwind silently
+      // drops those classes.
       colors: {
-        border: "var(--border)",
+        border: "color-mix(in srgb, var(--border) calc(<alpha-value> * 100%), transparent)",
         input: "var(--input)",
         ring: "var(--ring)",
-        background: "var(--background)",
-        foreground: "var(--foreground)",
+        background: "color-mix(in srgb, var(--background) calc(<alpha-value> * 100%), transparent)",
+        foreground: "color-mix(in srgb, var(--foreground) calc(<alpha-value> * 100%), transparent)",
         primary: {
-          DEFAULT: "var(--primary)",
-          foreground: "var(--primary-foreground)",
+          DEFAULT: "color-mix(in srgb, var(--primary) calc(<alpha-value> * 100%), transparent)",
+          foreground: "color-mix(in srgb, var(--primary-foreground) calc(<alpha-value> * 100%), transparent)",
+          strong: "color-mix(in srgb, var(--primary-strong) calc(<alpha-value> * 100%), transparent)",
+          tint: "var(--primary-tint)",
         },
         secondary: {
           DEFAULT: "var(--secondary)",
@@ -35,7 +40,7 @@ export default {
         },
         muted: {
           DEFAULT: "var(--muted)",
-          foreground: "var(--muted-foreground)",
+          foreground: "color-mix(in srgb, var(--muted-foreground) calc(<alpha-value> * 100%), transparent)",
         },
         accent: {
           DEFAULT: "var(--accent)",
@@ -45,25 +50,23 @@ export default {
           DEFAULT: "var(--card)",
           foreground: "var(--card-foreground)",
         },
+        "background-alt": "var(--background-alt)",
+        "border-strong": "color-mix(in srgb, var(--border-strong) calc(<alpha-value> * 100%), transparent)",
         neon: "var(--neon)",
-        "cyan-glow": "var(--cyan-glow)",
-        magenta: "var(--magenta)",
-        "violet-deep": "var(--violet-deep)",
       },
       borderRadius: {
         lg: "var(--radius)",
         md: "calc(var(--radius) - 2px)",
         sm: "calc(var(--radius) - 4px)",
-        xl: "calc(var(--radius) + 4px)",
-        "2xl": "calc(var(--radius) + 8px)",
-        "3xl": "calc(var(--radius) + 12px)",
+        xl: "0.875rem",
+        "2xl": "1rem",
+        "3xl": "1rem",
       },
       boxShadow: {
         xs: "var(--shadow-xs)",
         sm: "var(--shadow-sm)",
         premium: "var(--shadow-md)",
         "premium-lg": "var(--shadow-lg)",
-        glow: "var(--shadow-glow)",
       },
       transitionTimingFunction: {
         premium: "cubic-bezier(0.16, 1, 0.3, 1)",

@@ -28,7 +28,6 @@ export function ProjectModal({ slug, open, onOpenChange }: ProjectModalProps) {
     ? data.videos[0].playbackUrl ?? data.videos[0].videoUrl ?? data.videos[0].externalUrl
     : null;
   const videoUrl = videoSource ? resolveImageUrl(videoSource) : null;
-  const isVideo = !!videoUrl;
 
   const gallery = (data?.gallery ?? []).map((g) => ({
     url: resolveImageUrl(g.imageUrl),
@@ -55,7 +54,6 @@ export function ProjectModal({ slug, open, onOpenChange }: ProjectModalProps) {
   ];
 
   const hero = activeImage ?? cover;
-
   const heroIsVideo = !!(videoEntries.find((ve) => ve.url === hero) || (videoUrl && videoUrl === hero));
 
   const goCommission = () => {
@@ -67,77 +65,68 @@ export function ProjectModal({ slug, open, onOpenChange }: ProjectModalProps) {
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="w-full max-w-[min(96vw,1000px)] max-h-[90vh] overflow-y-auto border-white/10 bg-card/95 backdrop-blur-xl p-0 sm:rounded-[1.75rem]">
+      {/* Near-full-screen on mobile (small outer margin), a proper centered
+          card on larger screens. The close button (see dialog.tsx) is
+          positioned relative to THIS box, and now always has enough clear
+          space around it since content below starts with real padding
+          instead of sitting flush at the very top edge. */}
+      <DialogContent className="h-[100dvh] w-full max-w-full overflow-y-auto rounded-none border-0 bg-white p-0 sm:h-auto sm:max-h-[88vh] sm:max-w-2xl sm:rounded-xl sm:border sm:border-border md:max-w-4xl">
         {isLoading && (
-          <div className="grid md:grid-cols-2 gap-0 animate-pulse">
-            <div className="h-[360px] sm:h-[420px] bg-white/5 md:rounded-l-[1.75rem]" />
-            <div className="p-6 sm:p-8 space-y-4">
-              <div className="h-3 w-24 rounded bg-white/10" />
-              <div className="h-7 w-2/3 rounded bg-white/10" />
-              <div className="h-3 w-full rounded bg-white/5" />
-              <div className="h-3 w-5/6 rounded bg-white/5" />
-              <div className="h-3 w-4/6 rounded bg-white/5" />
-              <div className="h-11 w-40 rounded-2xl bg-white/10 mt-6" />
+          <div className="animate-pulse">
+            <div className="h-64 bg-background-alt sm:h-80" />
+            <div className="space-y-3 p-5 sm:p-6">
+              <div className="h-3 w-24 rounded bg-background-alt" />
+              <div className="h-6 w-2/3 rounded bg-background-alt" />
+              <div className="h-3 w-full rounded bg-background-alt" />
+              <div className="h-3 w-5/6 rounded bg-background-alt" />
+              <div className="mt-4 h-10 w-40 rounded-lg bg-background-alt" />
             </div>
           </div>
         )}
 
         {isError && !isLoading && (
           <div className="flex flex-col items-center gap-3 p-12 text-center">
-            <AlertTriangle className="h-8 w-8 text-white/40" />
-            <DialogTitle className="font-display text-lg">Couldn't load this project</DialogTitle>
-            <p className="text-sm text-white/55">Please close this window and try again.</p>
+            <AlertTriangle className="h-8 w-8 text-muted-foreground" />
+            <DialogTitle className="font-display text-lg text-foreground">Couldn't load this project</DialogTitle>
+            <p className="text-sm text-muted-foreground">Please close this window and try again.</p>
           </div>
         )}
 
         {data && !isLoading && (
-          <div className="grid gap-4 md:grid-cols-[minmax(0,1.3fr)_minmax(0,0.9fr)] md:gap-6">
-            {/* Visuals */}
-            <div className="relative bg-black/50 p-4 sm:p-5 md:p-6 rounded-[1.75rem] overflow-hidden flex flex-col gap-3">
-                  {heroIsVideo ? (
-                /* Video Player (hero is a video) */
-                <div className="relative w-full min-h-[260px] sm:min-h-[320px] max-h-[60vh] overflow-hidden rounded-2xl bg-black shadow-2xl border border-white/10">
-                  <div className="absolute inset-0 flex items-center justify-center">
-                    <video
-                      key={hero}
-                      src={hero}
-                      poster={cover ?? undefined}
-                      controls
-                      preload="metadata"
-                      autoPlay
-                      playsInline
-                      className="h-full w-full object-contain bg-black rounded-2xl"
-                    >
-                      Your browser does not support video playback.
-                    </video>
-                  </div>
+          <div className="flex flex-col md:grid md:grid-cols-[minmax(0,1.2fr)_minmax(0,1fr)]">
+            {/* Visuals — starts with real top padding, so the close button
+                (top-right of the whole modal) always has clear space and
+                never reads as "trapped inside" the image. */}
+            <div className="flex flex-col gap-3 bg-background-alt p-4 pt-14 sm:p-5 sm:pt-14">
+              {heroIsVideo ? (
+                <div className="relative aspect-video w-full overflow-hidden rounded-lg bg-black">
+                  <video
+                    key={hero}
+                    src={hero}
+                    poster={cover ?? undefined}
+                    controls
+                    preload="metadata"
+                    autoPlay
+                    playsInline
+                    className="h-full w-full object-contain"
+                  >
+                    Your browser does not support video playback.
+                  </video>
                 </div>
               ) : (
-                /* Image Gallery */
                 <>
-                  <div className="relative w-full min-h-[260px] sm:min-h-[320px] max-h-[60vh] overflow-hidden rounded-2xl bg-black shadow-2xl border border-white/10">
+                  <div className="relative aspect-square w-full overflow-hidden rounded-lg border border-border bg-white sm:aspect-[4/5]">
                     {hero ? (
-                      <>
-                        <SmartImage
-                          src={hero}
-                          size="thumb"
-                          alt=""
-                          aria-hidden="true"
-                          className="absolute inset-0 h-full w-full object-cover blur-2xl opacity-30 pointer-events-none"
-                        />
-                        <div className="absolute inset-0 flex items-center justify-center">
-                          <SmartImage
-                            src={hero}
-                            size="large"
-                            alt={data.title}
-                            loading="lazy"
-                            decoding="async"
-                            className="max-h-full max-w-full object-contain transition duration-700"
-                          />
-                        </div>
-                      </>
+                      <SmartImage
+                        src={hero}
+                        size="large"
+                        alt={data.title}
+                        loading="lazy"
+                        decoding="async"
+                        className="h-full w-full object-cover"
+                      />
                     ) : (
-                      <div className="grid h-full place-items-center text-white/30">
+                      <div className="grid h-full place-items-center text-muted-foreground">
                         <ImageOff className="h-8 w-8" />
                       </div>
                     )}
@@ -150,16 +139,14 @@ export function ProjectModal({ slug, open, onOpenChange }: ProjectModalProps) {
                           key={t.url}
                           onClick={() => setActiveImage(t.url)}
                           aria-label={`View ${t.alt}`}
-                          className={`relative h-16 w-16 shrink-0 overflow-hidden rounded-xl border-2 transition ${
-                            hero === t.url ? "border-neon" : "border-transparent hover:border-white/30"
+                          className={`relative h-14 w-14 shrink-0 overflow-hidden rounded-md border-2 transition-colors ${
+                            hero === t.url ? "border-primary" : "border-transparent hover:border-border-strong"
                           }`}
                         >
                           <SmartImage src={t.thumb ?? t.url} size="thumb" alt={t.alt} loading="lazy" decoding="async" className="h-full w-full object-cover" />
                           {t.isVideo && (
-                            <span className="absolute inset-0 grid place-items-center">
-                              <span className="inline-flex h-7 w-7 items-center justify-center rounded-full bg-black/50 backdrop-blur">
-                                <Play className="h-4 w-4 text-white" />
-                              </span>
+                            <span className="absolute inset-0 grid place-items-center bg-black/30">
+                              <Play className="h-4 w-4 text-white" fill="white" />
                             </span>
                           )}
                         </button>
@@ -171,33 +158,33 @@ export function ProjectModal({ slug, open, onOpenChange }: ProjectModalProps) {
             </div>
 
             {/* Details */}
-            <div className="p-4 sm:p-6 md:p-8 flex flex-col gap-4">
-              <span className="text-[10px] uppercase tracking-[0.35em] text-cyan-glow">
+            <div className="flex flex-col gap-3 p-5 sm:p-6">
+              <span className="text-[11px] font-medium uppercase tracking-wider text-primary-strong">
                 {data.category}
               </span>
-              <DialogTitle className="mt-2 font-display text-2xl sm:text-[2.35rem] md:text-3xl font-bold leading-tight">
+              <DialogTitle className="font-display text-xl font-bold leading-tight text-foreground sm:text-2xl">
                 {data.title}
               </DialogTitle>
 
-              <p className="mt-4 text-sm sm:text-base text-white/70 leading-relaxed">
+              <p className="text-sm leading-relaxed text-muted-foreground">
                 {data.description || data.shortDesc}
               </p>
 
               {data.features?.length > 0 && (
-                <ul className="mt-5 grid grid-cols-1 gap-2">
+                <ul className="mt-1 grid grid-cols-1 gap-2">
                   {data.features.slice(0, 5).map((f) => (
-                    <li key={f} className="flex items-start gap-2.5 text-sm text-white/75">
-                      <span className="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-neon" />
+                    <li key={f} className="flex items-start gap-2.5 text-sm text-foreground">
+                      <span className="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-primary" />
                       {f}
                     </li>
                   ))}
                 </ul>
               )}
 
-              <button onClick={goCommission} className="btn-pill !text-base mt-8 self-start">
-                🎨 Commission Now
+              <button onClick={goCommission} className="btn-pill mt-4 self-start">
+                Commission Now
                 <span className="btn-pill-arrow">
-                  <ArrowRight className="h-4 w-4" />
+                  <ArrowRight className="h-3.5 w-3.5" />
                 </span>
               </button>
             </div>

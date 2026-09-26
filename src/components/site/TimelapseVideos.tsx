@@ -34,14 +34,14 @@ export function TimelapseVideos() {
   };
 
   return (
-    <section id="timelapses" className="relative py-24 md:py-32 px-4 sm:px-6">
+    <section id="timelapses" className="bg-texture-dots relative border-y border-border bg-background-alt py-14 sm:py-20 px-4 sm:px-6">
       <div className="container mx-auto">
         <div className="text-center mb-14">
           <p className="kicker">Watch It Happen</p>
-          <h2 className="mt-3 font-display text-3xl sm:text-4xl md:text-5xl font-bold max-w-2xl mx-auto">
+          <h2 className="mt-3 font-display font-bold text-foreground max-w-2xl mx-auto">
             Time-lapse Videos
           </h2>
-          <p className="mt-4 text-white/60 max-w-xl mx-auto">
+          <p className="mt-4 text-muted-foreground max-w-xl mx-auto">
             Every commission, sped up — from the first pencil line to the finished character in
             minutes. Hover a card for a quick preview, or tap to watch.
           </p>
@@ -50,7 +50,7 @@ export function TimelapseVideos() {
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5 sm:gap-6">
           {isLoading
             ? Array.from({ length: 4 }).map((_, i) => (
-                <div key={i} className="skeleton aspect-[4/5] rounded-3xl" />
+                <div key={i} className="skeleton aspect-[4/5] rounded-xl" />
               ))
             : videos.map((v, i) => (
                 <TimelapseCard key={v.id} video={v} index={i} eager={i < 2} onOpen={() => openVideo(v)} />
@@ -59,7 +59,7 @@ export function TimelapseVideos() {
       </div>
 
       <Dialog open={modalOpen} onOpenChange={setModalOpen}>
-        <DialogContent className="w-[min(96vw,640px)] max-w-none max-h-[90vh] overflow-y-auto border-white/10 bg-card/95 backdrop-blur-xl p-0 sm:rounded-[1.75rem]">
+        <DialogContent className="w-[min(96vw,640px)] max-w-none max-h-[90vh] overflow-y-auto border-border bg-white p-0 rounded-xl">
           {activeVideo && (
             <div>
               <div className="relative w-full aspect-[4/5] sm:aspect-video bg-black sm:rounded-t-[1.75rem] overflow-hidden">
@@ -76,18 +76,18 @@ export function TimelapseVideos() {
                 </video>
               </div>
               <div className="p-6 sm:p-8">
-                <span className="text-[11px] uppercase tracking-[0.25em] text-cyan-glow">
+                <span className="text-[11px] uppercase tracking-[0.25em] text-primary-strong">
                   Time-lapse Preview
                 </span>
                 <DialogTitle className="mt-2 font-display text-xl sm:text-2xl font-bold leading-tight">
                   {activeVideo.title}
                 </DialogTitle>
                 {activeVideo.description && (
-                  <p className="mt-3 text-sm sm:text-base text-white/70 leading-relaxed">
+                  <p className="mt-3 text-sm sm:text-base text-foreground leading-relaxed">
                     {activeVideo.description}
                   </p>
                 )}
-                <p className="mt-4 text-xs text-white/40">
+                <p className="mt-4 text-xs text-muted-foreground">
                   Demo preview clip — full-length footage for this build is on the way.
                 </p>
               </div>
@@ -137,7 +137,7 @@ function TimelapseCard({
       viewport={{ once: true, margin: "-40px" }}
       transition={{ delay: index * 0.08 }}
       aria-label={`Play time-lapse: ${video.title}`}
-      className="group relative flex flex-col text-left rounded-3xl glass overflow-hidden transition-transform duration-300 hover:-translate-y-1 focus:outline-none focus-visible:ring-2 focus-visible:ring-neon/60"
+      className="group relative flex flex-col text-left rounded-xl border border-border bg-white overflow-hidden transition-transform duration-300 hover:-translate-y-1 focus:outline-none focus-visible:ring-2 focus-visible:ring-primary/60"
     >
       <div className="relative aspect-[4/5] overflow-hidden bg-black/20">
         <MediaSkeleton isLoaded={thumbnailLoaded} className="h-full w-full">
@@ -185,7 +185,7 @@ function TimelapseCard({
             hovered && video.videoUrl ? "opacity-0" : "opacity-100"
           }`}
         >
-          <span className="grid place-items-center h-14 w-14 sm:h-16 sm:w-16 rounded-full bg-black/40 backdrop-blur border border-white/20 transition-all duration-300 group-hover:bg-neon group-hover:border-neon group-hover:scale-110">
+          <span className="grid place-items-center h-14 w-14 sm:h-16 sm:w-16 rounded-full bg-black/40 backdrop-blur border border-white/30 transition-all duration-300 group-hover:bg-primary group-hover:border-primary group-hover:scale-110">
             <Play
               className="h-5 w-5 sm:h-6 sm:w-6 text-white translate-x-0.5 transition-colors group-hover:text-black"
               fill="currentColor"
@@ -194,22 +194,22 @@ function TimelapseCard({
         </div>
 
         {video.durationLabel && (
-          <span className="absolute top-3 right-3 rounded-full bg-black/60 backdrop-blur px-2.5 py-1 text-[10px] font-medium tracking-wide text-white/80">
+          <span className="absolute top-3 right-3 rounded-full bg-black/70 backdrop-blur px-2.5 py-1 text-[10px] font-medium tracking-wide text-white">
             {video.durationLabel}
           </span>
         )}
 
-        <span className="absolute top-3 left-3 rounded-full bg-black/50 backdrop-blur px-3 py-1 text-[10px] uppercase tracking-widest text-neon">
+        <span className="absolute top-3 left-3 rounded-full bg-black/70 backdrop-blur px-3 py-1 text-[10px] uppercase tracking-widest text-primary">
           Time-lapse
         </span>
       </div>
 
       <div className="p-4 sm:p-5">
-        <h3 className="font-display font-semibold text-sm sm:text-base leading-snug group-hover:text-neon transition-colors">
+        <h3 className="font-display font-semibold text-sm sm:text-base leading-snug group-hover:text-primary-strong transition-colors">
           {video.title}
         </h3>
         {video.description && (
-          <p className="mt-1.5 text-xs sm:text-sm text-white/55 line-clamp-2">
+          <p className="mt-1.5 text-xs sm:text-sm text-muted-foreground line-clamp-2">
             {video.description}
           </p>
         )}
