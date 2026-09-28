@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { Link, useParams, useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import {
+  ChevronLeft,
   ChevronRight,
   Star,
   ArrowRight,
@@ -48,6 +49,12 @@ export default function ProductDetail() {
 
   const hero = activeImage ?? cover;
   const heroIsVideo = !!videoEntries.find((v) => v.url === hero);
+  const heroIndex = Math.max(0, thumbs.findIndex((t) => t.url === hero));
+
+  const showImageAt = (index: number) => {
+    const next = thumbs[(index + thumbs.length) % thumbs.length];
+    if (next) setActiveImage(next.url);
+  };
 
   const handleWhatsApp = async () => {
     setWaLoading(true);
@@ -94,7 +101,7 @@ export default function ProductDetail() {
 
       <div className="container mx-auto px-4 py-6 sm:px-6 sm:py-8">
         {isLoading && (
-          <div className="grid animate-pulse gap-8 lg:grid-cols-[1fr_1.1fr]">
+          <div className="grid animate-pulse grid-cols-1 gap-8 lg:grid-cols-[1fr_1.1fr]">
             <div className="space-y-3">
               <div className="skeleton aspect-square w-full rounded-xl" />
               <div className="flex gap-2">
@@ -115,10 +122,10 @@ export default function ProductDetail() {
 
         {data && !isLoading && (
           <>
-            <div className="grid gap-8 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.1fr)] lg:gap-12">
+            <div className="grid grid-cols-1 gap-8 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.1fr)] lg:gap-12">
               {/* Gallery */}
-              <div className="lg:sticky lg:top-24 lg:self-start">
-                <div className="overflow-hidden rounded-xl border border-border bg-background-alt">
+              <div className="min-w-0 lg:sticky lg:top-24 lg:self-start">
+                <div className="relative overflow-hidden rounded-xl border border-border bg-background-alt">
                   {heroIsVideo ? (
                     <video
                       key={hero}
@@ -143,6 +150,30 @@ export default function ProductDetail() {
                     <div className="grid aspect-square place-items-center text-muted-foreground">
                       <ImageOff className="h-10 w-10" />
                     </div>
+                  )}
+
+                  {thumbs.length > 1 && (
+                    <>
+                      <button
+                        type="button"
+                        onClick={() => showImageAt(heroIndex - 1)}
+                        aria-label="Previous image"
+                        className="absolute left-2 top-1/2 grid h-9 w-9 -translate-y-1/2 place-items-center rounded-full bg-white/80 text-foreground shadow-md backdrop-blur transition-colors hover:bg-white sm:left-3 sm:h-10 sm:w-10"
+                      >
+                        <ChevronLeft className="h-5 w-5" />
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => showImageAt(heroIndex + 1)}
+                        aria-label="Next image"
+                        className="absolute right-2 top-1/2 grid h-9 w-9 -translate-y-1/2 place-items-center rounded-full bg-white/80 text-foreground shadow-md backdrop-blur transition-colors hover:bg-white sm:right-3 sm:h-10 sm:w-10"
+                      >
+                        <ChevronRight className="h-5 w-5" />
+                      </button>
+                      <span className="pointer-events-none absolute right-2 top-2 rounded-full bg-black/50 px-2 py-0.5 text-[11px] font-medium text-white sm:right-3 sm:top-3">
+                        {heroIndex + 1} / {thumbs.length}
+                      </span>
+                    </>
                   )}
                 </div>
 
@@ -170,7 +201,7 @@ export default function ProductDetail() {
               </div>
 
               {/* Info panel */}
-              <div>
+              <div className="min-w-0">
                 <span className="text-xs font-medium uppercase tracking-wide text-primary-strong">{data.category}</span>
                 <h1 className="mt-1.5 font-display text-2xl font-bold leading-tight text-foreground sm:text-3xl">
                   {data.title}
@@ -241,7 +272,7 @@ export default function ProductDetail() {
             </div>
 
             {/* Description + specs */}
-            <div className="mt-12 grid gap-8 lg:grid-cols-[minmax(0,1.1fr)_minmax(0,1fr)] lg:gap-12">
+            <div className="mt-12 grid grid-cols-1 gap-8 lg:grid-cols-[minmax(0,1.1fr)_minmax(0,1fr)] lg:gap-12">
               <motion.div initial={{ opacity: 0, y: 12 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}>
                 <h2 className="font-display text-lg font-bold text-foreground">Description</h2>
                 <p className="mt-3 whitespace-pre-line text-sm leading-relaxed text-muted-foreground">
